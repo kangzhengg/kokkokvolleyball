@@ -98,10 +98,10 @@ public class Add_New_Book extends Fragment {
             String author = ((EditText) view.findViewById(R.id.ETAuthor)).getText().toString();
             String status = forceExchange ? "Exchange" : (rbExchange.isChecked() ? "Exchange" : "Donate");
             String description = ((EditText) view.findViewById(R.id.ETDescription)).getText().toString();
-            
+
             Spinner genreSpinner = view.findViewById(R.id.SPGenre);
             String genre = genreSpinner.getSelectedItem() != null ? genreSpinner.getSelectedItem().toString() : "";
-            
+
             Spinner conditionSpinner = view.findViewById(R.id.SPCondition);
             String condition = conditionSpinner.getSelectedItem() != null ? conditionSpinner.getSelectedItem().toString() : "";
 
@@ -112,6 +112,12 @@ public class Add_New_Book extends Fragment {
             result.putString("status", status);
             getParentFragmentManager().setFragmentResult("newBook", result);
             BookRepository.addBook(new Book(title, author, status, 0, 0, "You", description, genre, condition));
+
+            // Add 1 credit if this is an exchange book
+            if ("Exchange".equalsIgnoreCase(status)) {
+                CreditManager creditManager = new CreditManager(requireContext());
+                creditManager.addCredits(1);
+            }
 
             // Go to BookAddedFragment
             getParentFragmentManager().beginTransaction()
